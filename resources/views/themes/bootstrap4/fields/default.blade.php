@@ -2,7 +2,7 @@
     <label for="{{ $id }}"{!! Html::classes(['text-danger' => $hasErrors]) !!}>
         {{ $label }}
 @if ($required)
-        <span class="badge badge-info">Required</span>
+        <span class="text-danger">*</span>
 @endif
     </label>
     {!! $input !!}
