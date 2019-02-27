@@ -21,3 +21,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 Route::resource('empresa','Catalogos\EmpresaController');
+Route::resource('contacto','Catalogos\ContactoController');

@@ -23,11 +23,13 @@ class EmpresaRequest extends FormRequest
      */
     public function rules()
     {
+        $rule=optional($this->empresa)->emp_id;
+        $except=isset($rule)?(','.$rule.',emp_id'):'';
         return [
             'emp_nombre'=>'required|max:20|string',
             'emp_direccion'=>'required|max:50|string',
             'emp_telefono'=>'required|numeric',
-            'emp_email'=>"required|email|unique:mysql.empresa,emp_email,".optional($this->empresa)->emp_id.",emp_id",
+            'emp_email'=>"required|email|unique:mysql.empresa,emp_email".$except,
 
         ];
     }
