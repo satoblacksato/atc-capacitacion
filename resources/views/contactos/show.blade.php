@@ -1,8 +1,7 @@
-	{!!Form::open(['route'=>['contacto.update',$contacto->con_id],'
-	method'=>'PUT' ,'id'=>'frmData'])!!}
 	<div class="row">
 		<div class="col-lg-6">
-			{!!Field::select('prv_id',$proveedores,$contacto->prv_id,['label'=>'Proveedor','empty'=>'- Seleccione proveedor -'])!!}
+		{!!Field::text('prv_id',$contacto->proveedor->prv_nombre,['label'=>'Proveedor'])!!}
+	
 		</div>
 		<div class="col-lg-6">
 			{!!Field::text('con_cargo',$contacto->con_cargo,['label'=>'Cargo'])!!}
@@ -36,14 +35,4 @@
 
 	<div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-cerrar" data-dismiss="modal">Cerrar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
       </div>
-
- {!!Form::close()!!}
-
- <script>
- 	$("#frmData").submit(function(event) {
- 		event.preventDefault();
- 		send($("#frmData"),'PUT');
- 	});
- </script>

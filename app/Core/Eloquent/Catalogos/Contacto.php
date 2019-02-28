@@ -2,10 +2,16 @@
 
 namespace App\Core\Eloquent\Catalogos;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Model,SoftDeletes};
+
+ use Cviebrock\EloquentSluggable\Sluggable;
+ use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
+
 
 class Contacto extends Model
 {
+	use SoftDeletes;//,Sluggable,SluggableScopeHelpers;
+
     protected $connection='mysql';
     protected $table='contacto';
 
@@ -20,10 +26,23 @@ class Contacto extends Model
 				  'con_departamento' ,
 				  'con_email' ,
 				  'con_telefono' ,
-				  'con_extension',
+				  'con_extension'
 				];
 
 	public function proveedor(){
      	return $this->belongsTo(Proveedor::class,'prv_id');
      }
+
+/*
+     public function sluggable(){
+     	return[
+     		'slug'=>[
+     			'source'=>'con_nombre'
+     		]
+     	];
+     }
+
+     public function getKeyName(){
+     	return 'slug';
+     }*/
 }

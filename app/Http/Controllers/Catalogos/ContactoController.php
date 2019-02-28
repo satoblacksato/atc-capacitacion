@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Catalogos;
 use App\Core\Eloquent\Catalogos\{Contacto,Proveedor};
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Http\Requests\Catalogos\ContactoRequest;
 use Facades\App\Core\Facades\TableRepository;
 use Facades\App\Core\Caching\CacheCombos;
-
+use Mail;
+use DB;
 class ContactoController extends Controller
 {
     /**
@@ -31,7 +32,13 @@ class ContactoController extends Controller
      */
     public function create()
     {
-        //
+         if(request()->ajax()){
+            return response()->json(view('contactos.create')
+            ->with([
+                'proveedores'=>CacheCombos::getProveedor()
+            ])->render());    
+        }
+        return abort(401);
     }
 
     /**
@@ -40,9 +47,23 @@ class ContactoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ContactoRequest $request)
     {
-        //
+        DB::connection('mysql')->transaction(function()use(&$request){
+              $contacto=new Contacto();
+                 $contacto->fill($request->validated());
+               // $contacto->con_nombre=$request->con_nombre;
+               // $contacto->con_nombre=$request->get('con_nombre');
+               $contacto->save();
+
+             Mail::to($contacto->con_email)
+             ->cc('ernesto.liberio@gmail.com')
+             ->queue(new \App\Mail\RegistroContacto());
+        });
+
+      
+
+       return response()->json(["Proceso OK"]);
     }
 
     /**
@@ -53,7 +74,13 @@ class ContactoController extends Controller
      */
     public function show(Contacto $contacto)
     {
-        //
+          if(request()->ajax()){
+            return response()->json(view('contactos.show')
+            ->with([
+                'contacto'=>$contacto
+            ])->render());    
+        }
+        return abort(401);
     }
 
     /**
@@ -65,10 +92,12 @@ class ContactoController extends Controller
     public function edit(Contacto $contacto)
     {
         if(request()->ajax()){
+        
             return response()->json(view('contactos.edit')
             ->with([
                 'proveedores'=>CacheCombos::getProveedor(),
-                'contacto'=>$contacto
+                'contacto'=>$contacto,
+                'slug'=>$contacto->slug
             ])->render());    
         }
         return abort(401);
@@ -82,9 +111,13 @@ class ContactoController extends Controller
      * @param  \App\Core\Eloquent\Catalogos\Contacto  $contacto
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Contacto $contacto)
+    public function update(ContactoRequest $request, Contacto $contacto)
     {
-        //
+       $contacto->fill($request->validated());
+       // $contacto->con_nombre=$request->con_nombre;
+       // $contacto->con_nombre=$request->get('con_nombre');
+       $contacto->save();
+       return response()->json(["Proceso OK"]);
     }
 
     /**
@@ -95,6 +128,7 @@ class ContactoController extends Controller
      */
     public function destroy(Contacto $contacto)
     {
-        //
+        $contacto->delete();
+        return redirect()->route('contacto.index');
     }
 }
